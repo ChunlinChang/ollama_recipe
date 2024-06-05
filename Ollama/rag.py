@@ -100,5 +100,5 @@ class ChatPDF:
 assistant = ChatPDF()
 
 # 假設你有一個 PDF 文件路徑
-pdf_file_path = "Ollama/food_1.pdf"
+pdf_file_path = "/Ollama/food_1.pdf"
 assistant.ingest(pdf_file_path)
