@@ -33,32 +33,60 @@ class ChatPDF:
         )
 
     def ingest(self, pdf_file_path: str):
-        docs = PyPDFLoader(file_path=pdf_file_path).load()  # 從 PDF 文件加載文檔
-        chunks = self.text_splitter.split_documents(docs)  # 將文檔拆分為小塊進行處理
-        chunks = filter_complex_metadata(chunks)  # 過濾文檔的複雜元數據
+        try:
+            # Load and split PDF documents
+            docs = PyPDFLoader(file_path=pdf_file_path).load()
+            chunks = self.text_splitter.split_documents(docs)
+            chunks = filter_complex_metadata(chunks)
+            
+            # Debugging statement to confirm chunks are created
+            print(f"Loaded {len(chunks)} chunks from {pdf_file_path}")
 
-        vector_store = Chroma.from_documents(documents=chunks, embedding=FastEmbedEmbeddings())  # 將文檔向量化
-        self.retriever = vector_store.as_retriever(  # 將向量存儲庫轉換為文本檢索器
-            search_type="similarity_score_threshold",
-            search_kwargs={
-                "k": 3,
-                "score_threshold": 0.5,
-            },
-        )
+            # Initialize embeddings
+            embedding = FastEmbedEmbeddings()
+            
+            # Debugging statement to confirm embeddings are created
+            print("FastEmbedEmbeddings initialized successfully")
 
-        # 定義問答流程
-        self.chain = ({"context": self.retriever, "question": RunnablePassthrough()}
-                    | self.prompt
-                    | self.model
-                    | StrOutputParser())
+            # Create vector store from documents
+            self.vector_store = Chroma.from_documents(documents=chunks, embedding=embedding)
+            self.retriever = self.vector_store.as_retriever(
+                search_type="similarity_score_threshold",
+                search_kwargs={"k": 3, "score_threshold": 0.5}
+            )
+
+            # Define the question-answering chain
+            self.chain = (
+                {"context": self.retriever, "question": RunnablePassthrough()}
+                | self.prompt
+                | self.model
+                | StrOutputParser()
+            )
+            
+            # Debugging statement to confirm the retriever and chain are created
+            print("Vector store, retriever, and chain initialized successfully")
+
+        except Exception as e:
+            print(f"Error during ingestion: {e}")
+            raise
 
     def ask(self, query: str):
         if not self.chain:
             return "Please, add a PDF document first."
-
-        return self.chain.invoke(query)  # 啟動問答流程，對問題進行回答
+        
+        # Debugging statement to confirm query processing
+        print(f"Asking query: {query}")
+        
+        return self.chain.invoke(query)
 
     def clear(self):
-        self.vector_store = None  # 清除文檔向量存儲庫
-        self.retriever = None  # 清除文本檢索器
-        self.chain = None  # 清除問答流程
+        self.vector_store = None
+        self.retriever = None
+        self.chain = None
+
+# 示例使用方法
+assistant = ChatPDF()
+
+# 假設你有一個 PDF 文件路徑
+pdf_file_path = "food_1.pdf"
+assistant.ingest(pdf_file_path)
