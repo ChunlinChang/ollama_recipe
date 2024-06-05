@@ -31,12 +31,17 @@ def read_and_save_file():
     st.session_state["user_input"] = ""
 
     print("runed read_and_save_file(...)")
+    
+    # GitHub 文件的原始 URL
+    github_file_url = "https://github.com/ChunlinChang/ollama_recipe/blob/main/Ollama/food_1.pdf"
+    
+    # 获取文件内容
+    file_content = get_file_content(github_file_url)
 
     predefined_files = ["https://github.com/ChunlinChang/ollama_recipe/blob/main/Ollama/food_1.pdf"] #預設PDF
     
-    for file_path in predefined_files:
-        with st.session_state["ingestion_spinner"], st.spinner(f"Ingesting {file_path}"):
-            st.session_state["assistant"].ingest(file_path)  # 將文件內容導入聊天機器人
+
+    st.session_state["assistant"].ingest(file_content)  # 將文件內容導入聊天機器人
     
     # for file in st.session_state["file_uploader"]:
     #     with tempfile.NamedTemporaryFile(delete=False) as tf:
