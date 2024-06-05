@@ -1,9 +1,6 @@
 langchain 
-langchain-community
 streamlit 
 streamlit-chat 
 fastembed 
 chromadb 
 pypdf
-pysqlite3-binary
-pysqlite3
