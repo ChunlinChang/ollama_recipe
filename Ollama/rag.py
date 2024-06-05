@@ -1,3 +1,6 @@
+import os
+import streamlit as st
+from streamlit_chat import message
 from langchain.vectorstores import Chroma  # 導入 Chroma 向量存儲庫，用於文檔向量化
 from langchain.chat_models import ChatOllama  # 導入 ChatOllama 模型，用於回答問題
 from langchain.embeddings import FastEmbedEmbeddings  # 導入 FastEmbedEmbeddings，用於文本向量化
@@ -37,10 +40,19 @@ class ChatPDF:
             # Load and split PDF documents
             docs = PyPDFLoader(file_path=pdf_file_path).load()
             chunks = self.text_splitter.split_documents(docs)
-            chunks = filter_complex_metadata(chunks)
             
             # Debugging statement to confirm chunks are created
             print(f"Loaded {len(chunks)} chunks from {pdf_file_path}")
+            for chunk in chunks:
+                print(chunk)
+
+            # Apply metadata filter
+            chunks = filter_complex_metadata(chunks)
+
+            # Debugging statement to confirm chunks after filtering
+            print(f"Chunks after filtering: {len(chunks)}")
+            for chunk in chunks:
+                print(chunk)
 
             # Initialize embeddings
             embedding = FastEmbedEmbeddings()
@@ -88,5 +100,5 @@ class ChatPDF:
 assistant = ChatPDF()
 
 # 假設你有一個 PDF 文件路徑
-pdf_file_path = "Ollama/food_1.pdf"
+pdf_file_path = "food_1.pdf"
 assistant.ingest(pdf_file_path)
