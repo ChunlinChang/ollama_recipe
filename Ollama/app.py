@@ -32,7 +32,7 @@ def read_and_save_file():
 
     print("runed read_and_save_file(...)")
 
-    predefined_files = ["Ollama/food_1.pdf"] #預設PDF
+    predefined_files = ["github.com/ChunlinChang/ollama_recipe/blob/main/Ollama/food_1.pdf"] #預設PDF
     
     for file_path in predefined_files:
         with st.session_state["ingestion_spinner"], st.spinner(f"Ingesting {file_path}"):
