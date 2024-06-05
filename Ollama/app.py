@@ -32,12 +32,12 @@ def read_and_save_file():
 
     print("runed read_and_save_file(...)")
 
-    predefined_files = ["Ollama/food_1.pdf"] #預設PDF
+    # 修改這裡的文件路徑
+    predefined_files = ["/Ollama/food_1.pdf"]  # 替換為你自己的PDF文件路徑
     
     for file_path in predefined_files:
         with st.session_state["ingestion_spinner"], st.spinner(f"Ingesting {file_path}"):
             st.session_state["assistant"].ingest(file_path)  # 將文件內容導入聊天機器人
-    
     # for file in st.session_state["file_uploader"]:
     #     with tempfile.NamedTemporaryFile(delete=False) as tf:
     #         tf.write(file.getbuffer())  # 寫入臨時文件
