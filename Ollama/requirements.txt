@@ -6,3 +6,4 @@ fastembed
 chromadb 
 pypdf
 pysqlite3-binary
+pysqlite3
